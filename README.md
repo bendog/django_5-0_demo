@@ -74,9 +74,6 @@ class PersonCreate(generic.CreateView):
     success_url = reverse_lazy("demo:index")
 
 
-class PersonDelete(generic.DeleteView)
-    model = Person
-    success_url = reverse_lazy("demo:index")
 ```
 
 ## templates
@@ -101,15 +98,18 @@ class PersonDelete(generic.DeleteView)
 
 `demo/templates/person_list.html`
 ```html
+{% extends "base.html" %}
 {% block content %}
     <ul>
 	{% for person in object_list %}
         <li>
             <a href="mailto:{{ person.email }}">{{ person.name }}</a>
+            {{ person.bio }}
         </li>
 	{% endfor %}
     </ul>
 {% endblock %}
+
 ```
 
 ## urls
@@ -134,7 +134,6 @@ app_name = "demo"
 urlpatterns = [
     path("", views.PersonList.as_view(), name="index"),
     path("create/", views.PersonCreate.as_view(), name="person-create"),
-    path("<int:pk>/delete", views.PersonDelete.as_view(), name="person-delete"),
 ]
 
 ```
@@ -144,6 +143,11 @@ urlpatterns = [
     ./manage.py runserver
 
 ## addming items
+
+`demo/templates/demo/person_list.html`
+```html
+<a href="{% url "demo:person-create" %}">Add Person</a>
+```
 
 `demo/templates/demo/person_form.html`
 ```html
@@ -158,10 +162,65 @@ urlpatterns = [
 {% endblock %}
 ```
 
-## removing items
+## update items
+
+`demo/views.py`
+```python
+class PersonUpdate(generic.UpdateView):
+    model = Person
+    fields = ["name", "email", "bio"]
+    success_url = reverse_lazy("demo:index")
+```
+
+`demo/urls.py`
+```python
+path("<int:pk>/update", views.PersonUpdate.as_view(), name="person-update"),
+```
 
 `demo/templates/demo/person_list.html`
 ```html
+|
+<a href="{% url 'demo:person-update' person.pk %}">Edit</a>
+```
+
+## removing items
+
+`demo/views.py`
+```python
+
+class PersonDelete(generic.DeleteView):
+    model = Person
+    success_url = reverse_lazy("demo:index")
+
+```
+
+`demo/urls.py`
+```python
+path("<int:pk>/delete", views.PersonDelete.as_view(), name="person-delete"),
+```
+
+
+`demo/templates/demo/person_list.html`
+```html
+|
 <a href="{% url 'demo:person-delete' person.pk %}">X</a>
 ```
 
+`demo/templates/demo/person_confirm_delete`
+```html
+{% extends "base.html" %}
+{% block content %}
+<h3>Do you wish to delete this person?</h3>
+<pre>
+ID:    {{ person.id }}<br>
+Name:  {{ person.name }}<br>
+Email: {{ person.email }}<br>
+Bio:   {{ person.bio }}<br>
+</pre>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="DELETE">
+</form>
+{% endblock %}
+```
