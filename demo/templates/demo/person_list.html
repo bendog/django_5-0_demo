@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-    <a href="{% url "demo:person-create" %}">Add Person</a>
-    <ul>
-	{% for person in object_list %}
-        <li>
-            <a href="mailto:{{ person.email }}">{{ person.name }}</a>
-            {{ person.bio }}
-            |
-            <a href="{% url 'demo:person-update' person.pk %}">Edit</a>
-            |
-            <a href="{% url 'demo:person-delete' person.pk %}">X</a>
-        </li>
-	{% endfor %}
-    </ul>
+    <section class="section-secondary">
+        <p><a href="{% url "demo:person-create" %}">Add Person</a></p>
+        <div class="row">
+            {% for person in object_list %}
+                <div class="col col-md-6">
+                  <div class="card">
+                    <h3 class="card-title"><a href="mailto:{{ person.email }}">{{ person.name }}</a></h3>
+                    {{ person.bio }}
+                    <ul class="card-actions">
+                        <li><a href="{% url 'demo:person-update' person.pk %}"><button class="button-warning">edit</button></a></li>
+                        <li><a href="{% url 'demo:person-delete' person.pk %}"><button class="button-danger">delete</button></a></li>
+                    </ul>
+                  </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}
