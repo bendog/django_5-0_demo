@@ -2,9 +2,10 @@
 {% block content %}
 <h3>Do you wish to delete this person?</h3>
 <pre>
-Name:  {{ person.name }}
-Email: {{ person.email }}
-Bio:   {{ person.bio }}
+ID:    {{ person.id }}<br>
+Name:  {{ person.name }}<br>
+Email: {{ person.email }}<br>
+Bio:   {{ person.bio }}<br>
 </pre>
 <form method="POST">
     {% csrf_token %}

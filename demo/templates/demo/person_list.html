@@ -5,6 +5,10 @@
 	{% for person in object_list %}
         <li>
             <a href="mailto:{{ person.email }}">{{ person.name }}</a>
+            {{ person.bio }}
+            |
+            <a href="{% url 'demo:person-update' person.pk %}">Edit</a>
+            |
             <a href="{% url 'demo:person-delete' person.pk %}">X</a>
         </li>
 	{% endfor %}

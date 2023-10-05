@@ -17,6 +17,12 @@ class PersonCreate(generic.CreateView):
     success_url = reverse_lazy("demo:index")
 
 
+class PersonUpdate(generic.UpdateView):
+    model = Person
+    fields = ["name", "email", "bio"]
+    success_url = reverse_lazy("demo:index")
+
+
 class PersonDelete(generic.DeleteView):
     model = Person
     success_url = reverse_lazy("demo:index")
