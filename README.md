@@ -14,7 +14,7 @@
 
 ## link app
 
-project/settings.py
+`project/settings.py`
 ```python
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 
 ## create models
 
-models.py
+`models.py`
 ```python
 class Person(models.Model):
     name = models.CharField(max_length=200)
@@ -37,7 +37,7 @@ class Person(models.Model):
     bio = models.TextField(blank=True, null=True)
 ```
 
-admin.py
+`admin.py`
 ```python
 from . import models
 
@@ -66,14 +66,6 @@ from .models import Person
 
 class PersonList(generic.ListView):
     model = Person
-
-
-class PersonCreate(generic.CreateView):
-    model = Person
-    fields = "__all__"
-    success_url = reverse_lazy("demo:index")
-
-
 ```
 
 ## templates
@@ -109,12 +101,11 @@ class PersonCreate(generic.CreateView):
 	{% endfor %}
     </ul>
 {% endblock %}
-
 ```
 
 ## urls
 
-project/urls.py
+`project/urls.py`
 ```python
 from django.urls import path, include
 
@@ -124,7 +115,7 @@ urlpatterns = [
 ]
 ```
 
-demo/urls.py
+`demo/urls.py`
 ```python
 from django.urls import path
 
@@ -133,16 +124,27 @@ from . import views
 app_name = "demo"
 urlpatterns = [
     path("", views.PersonList.as_view(), name="index"),
-    path("create/", views.PersonCreate.as_view(), name="person-create"),
 ]
-
 ```
 
 ## run server again
 
     ./manage.py runserver
 
-## addming items
+## adding items
+
+`demo/views.py`
+```python
+class PersonCreate(generic.CreateView):
+    model = Person
+    fields = "__all__"
+    success_url = reverse_lazy("demo:index")
+```
+
+`demo/urls.py`
+```python
+path("create/", views.PersonCreate.as_view(), name="person-create"),
+```
 
 `demo/templates/demo/person_list.html`
 ```html
@@ -187,11 +189,9 @@ path("<int:pk>/update", views.PersonUpdate.as_view(), name="person-update"),
 
 `demo/views.py`
 ```python
-
 class PersonDelete(generic.DeleteView):
     model = Person
     success_url = reverse_lazy("demo:index")
-
 ```
 
 `demo/urls.py`
@@ -223,4 +223,50 @@ Bio:   {{ person.bio }}<br>
     <input type="submit" value="DELETE">
 </form>
 {% endblock %}
+```
+
+## make it pretty 
+
+`demo/templates/base.html`
+```html
+<body>
+<section>
+<div class="panel">
+    <div class="panel-head">
+        <p class="panel-title">PythonWA Demo</p>
+    </div>
+    <div class="panel-body">
+{% block content %}
+
+{% endblock %}
+    </div>
+</div>
+</section>
+
+</body>
+```
+
+`demo/templates/demo/person_list.html`
+```html
+{% extends "base.html" %}
+{% block content %}
+    <section class="section-secondary">
+        <p><a href="{% url "demo:person-create" %}">Add Person</a></p>
+        <div class="row">
+            {% for person in object_list %}
+                <div class="col col-md-6">
+                  <div class="card">
+                    <h3 class="card-title"><a href="mailto:{{ person.email }}">{{ person.name }}</a></h3>
+                    {{ person.bio }}
+                    <ul class="card-actions">
+                        <li><a href="{% url 'demo:person-update' person.pk %}"><button class="button-warning">edit</button></a></li>
+                        <li><a href="{% url 'demo:person-delete' person.pk %}"><button class="button-danger">delete</button></a></li>
+                    </ul>
+                  </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
 ```
