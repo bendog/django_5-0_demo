@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <a href="{% url "demo:person-create" %}">Add Person</a>
+    <ul>
+	{% for person in object_list %}
+        <li>
+            <a href="mailto:{{ person.email }}">{{ person.name }}</a>
+            <a href="{% url 'demo:person-delete' person.pk %}">X</a>
+        </li>
+	{% endfor %}
+    </ul>
+{% endblock %}
